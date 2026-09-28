@@ -31,8 +31,22 @@ public class Visita {
     private LocalDateTime horaListo;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(50)")
     private EstadoVisita estado;
+
+    private String notas;
+    private String servicios;
+    @Lob
+    @Column(columnDefinition="LONGTEXT")
+    private String detalleVisita;
+    private String servicioAdicional;
+    private Double montoFinalPactado;
+
+    private String metodoPago;
+    @Lob
+    @Column(columnDefinition="LONGTEXT")
+    private String comprobantePago;
+    private Double montoRecaudado;
 
     @PrePersist
     public void prePersist() {

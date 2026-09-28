@@ -4,5 +4,7 @@ public enum EstadoVisita {
     PROGRAMADA,
     EN_PROCESO,
     LISTO,
-    FINALIZADA
+    FINALIZADA,
+    POR_PAGAR,
+    PAGADO
 }

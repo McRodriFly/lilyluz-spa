@@ -21,6 +21,7 @@ public class Mascota {
     private String raza;
     private Integer edad;
     private Double peso;
+    private String tamano;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tutor_id", nullable = false)
@@ -30,4 +31,7 @@ public class Mascota {
     @CollectionTable(name = "mascota_tags", joinColumns = @JoinColumn(name = "mascota_id"))
     @Column(name = "tag")
     private List<String> tagsComportamiento;
+
+    @Column(length = 1000)
+    private String comentarios;
 }

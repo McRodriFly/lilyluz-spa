@@ -2,6 +2,9 @@
 .github/
 .DS_Store
 *.log
+*.trace.db
+*.diff
+.worktrees/
 node_modules/
 target/
 .classpath
