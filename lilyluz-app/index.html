@@ -1,10 +1,31 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="LilyLuz Spa" />
+    <meta name="theme-color" content="#F5F5F7" />
     <title>LilyLuz Spa — Peluquería Canina</title>
+    <style>
+      /* Suavizado Apple y prevenir rebote indeseado en inputs de iOS */
+      html, body {
+        background-color: #F5F5F7;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-tap-highlight-color: transparent;
+      }
+      /* Soporte para Safe Area de iPhone (Notch y barra inferior) */
+      .safe-bottom {
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+      }
+      .safe-top {
+        padding-top: max(0.5rem, env(safe-area-inset-top));
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

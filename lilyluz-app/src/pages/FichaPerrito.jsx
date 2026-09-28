@@ -142,21 +142,21 @@ export default function FichaPerrito({ citaId, onBack }) {
       </button>
 
       {/* ── CABECERA PRINCIPAL ── */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100">
+      <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100">
         <div className="flex justify-between items-start flex-wrap gap-4">
           <div>
-            <div className="flex items-center gap-4 flex-wrap">
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight">
+            <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
                 {mascota.nombre}
               </h1>
-              <span className={`px-4 py-1.5 rounded-full text-lg font-bold ${statusInfo.color}`}>
+              <span className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-base sm:text-lg font-bold ${statusInfo.color}`}>
                 {statusInfo.label}
               </span>
             </div>
-            <p className="text-2xl text-gray-500 mt-2">
+            <p className="text-xl sm:text-2xl text-gray-500 mt-2">
               Tutor: <span className="text-gray-900 font-bold">{tutor.nombre || 'Sin tutor'}</span>
             </p>
-            <p className="text-xl text-gray-400 mt-1">
+            <p className="text-lg sm:text-xl text-gray-400 mt-1">
               📞 <a href={`tel:${tutor.telefono}`} className="text-blue-600 hover:underline">{tutor.telefono || 'Sin teléfono'}</a>
             </p>
           </div>
@@ -164,51 +164,51 @@ export default function FichaPerrito({ citaId, onBack }) {
           <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={enviarWhatsApp}
-              className="p-5 bg-green-500 hover:bg-green-600 text-white rounded-2xl shadow-md flex items-center gap-3 font-bold text-xl transition"
+              className="p-3.5 sm:p-5 bg-green-500 hover:bg-green-600 active:scale-95 text-white rounded-xl sm:rounded-2xl shadow-md flex items-center gap-2 sm:gap-3 font-bold text-lg sm:text-xl transition"
             >
-              <MessageCircle size={26} /> Avisar WhatsApp
+              <MessageCircle size={24} /> Avisar WhatsApp
             </button>
           </div>
         </div>
 
         {/* Tarjeta de Cita Finalizada */}
         {esFinalizado && (
-          <div className="mt-6 p-6 bg-purple-50 border-2 border-purple-200 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+          <div className="mt-5 p-5 bg-purple-50 border-2 border-purple-200 rounded-2xl flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-bold text-purple-600 uppercase tracking-wider">Cita Finalizada</p>
-              <p className="text-4xl font-extrabold text-purple-900 mt-1">
+              <p className="text-xs sm:text-sm font-bold text-purple-600 uppercase tracking-wider">Cita Finalizada</p>
+              <p className="text-3xl sm:text-4xl font-extrabold text-purple-900 mt-0.5">
                 💰 Cobrado: ${Number(cita.montoRecaudado || 0).toLocaleString()}
               </p>
             </div>
             <button
               onClick={() => setShowCobroModal(true)}
-              className="px-6 py-3 bg-white border border-purple-200 hover:bg-purple-100 text-purple-800 rounded-xl font-bold text-lg shadow-sm transition flex items-center gap-2"
+              className="px-5 py-2.5 bg-white border border-purple-200 hover:bg-purple-100 text-purple-800 rounded-xl font-bold text-base sm:text-lg shadow-sm transition flex items-center gap-1.5"
             >
-              <Edit2 size={18} /> Modificar Monto
+              <Edit2 size={16} /> Modificar Monto
             </button>
           </div>
         )}
 
         {/* Info rápida */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 mt-5">
           {[
             ['RAZA', mascota.raza || '—'],
             ['EDAD', mascota.edad != null ? `🎂 ${mascota.edad} años` : '—'],
             ['TAMAÑO', `📏 ${mascota.tamano || '—'}`],
             ['HORA CITA', `🕐 ${cita.hora?.substring(0, 5) || '—'}`],
           ].map(([lbl, val]) => (
-            <div key={lbl} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-              <p className="text-sm font-bold text-gray-400">{lbl}</p>
-              <p className="text-xl font-extrabold text-gray-800 mt-1">{val}</p>
+            <div key={lbl} className="p-3 sm:p-4 bg-gray-50 rounded-xl sm:rounded-2xl border border-gray-100 text-center">
+              <p className="text-xs font-bold text-gray-400">{lbl}</p>
+              <p className="text-lg sm:text-xl font-extrabold text-gray-800 mt-0.5">{val}</p>
             </div>
           ))}
         </div>
 
         {/* Tags de comportamiento */}
         {mascota.tagsComportamiento?.length > 0 && (
-          <div className="flex flex-wrap gap-3 mt-5">
+          <div className="flex flex-wrap gap-2 mt-4">
             {mascota.tagsComportamiento.map(t => (
-              <span key={t} className="px-4 py-2 bg-blue-50 text-blue-800 rounded-2xl text-lg font-semibold border border-blue-200/50">
+              <span key={t} className="px-3 py-1.5 bg-blue-50 text-blue-800 rounded-xl text-base font-semibold border border-blue-200/50">
                 {t}
               </span>
             ))}
@@ -216,43 +216,43 @@ export default function FichaPerrito({ citaId, onBack }) {
         )}
 
         {mascota.comentarios && (
-          <div className="mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-200 text-amber-900 text-xl font-medium">
+          <div className="mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-200 text-amber-900 text-lg sm:text-xl font-medium">
             ⚠️ <strong>Notas fijas de {mascota.nombre}:</strong> {mascota.comentarios}
           </div>
         )}
       </div>
 
       {/* ── BOTONES DE FLUJO DE LA CITA ── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {/* 1. Iniciar */}
         <button
           onClick={() => cambiarEstado('iniciar')}
           disabled={cita.estado !== 'PROGRAMADA'}
-          className="h-24 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed text-white text-2xl font-bold rounded-3xl flex items-center justify-center gap-3 shadow-md transition"
+          className="h-16 sm:h-24 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xl sm:text-2xl font-bold rounded-2xl sm:rounded-3xl flex items-center justify-center gap-3 shadow-md transition active:scale-98"
         >
-          <Play size={28} /> INICIAR VISITA
+          <Play size={24} /> INICIAR VISITA
         </button>
 
         {/* 2. Marcar Listo */}
         <button
           onClick={() => cambiarEstado('terminar')}
           disabled={cita.estado !== 'EN_PROCESO'}
-          className="h-24 bg-blue-600 hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-white text-2xl font-bold rounded-3xl flex items-center justify-center gap-3 shadow-md transition"
+          className="h-16 sm:h-24 bg-blue-600 hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xl sm:text-2xl font-bold rounded-2xl sm:rounded-3xl flex items-center justify-center gap-3 shadow-md transition active:scale-98"
         >
-          <CheckCircle2 size={28} /> MARCAR LISTO
+          <CheckCircle2 size={24} /> MARCAR LISTO
         </button>
 
         {/* 3. Finalizar y Registrar Monto Cobrado */}
         <button
           onClick={() => setShowCobroModal(true)}
           disabled={cita.estado === 'PROGRAMADA'}
-          className={`h-24 text-white text-2xl font-bold rounded-3xl flex items-center justify-center gap-3 shadow-md transition ${
+          className={`h-16 sm:h-24 text-white text-xl sm:text-2xl font-bold rounded-2xl sm:rounded-3xl flex items-center justify-center gap-3 shadow-md transition active:scale-98 ${
             esFinalizado
               ? 'bg-purple-800 hover:bg-purple-900'
               : 'bg-purple-600 hover:bg-purple-700'
           }`}
         >
-          <DollarSign size={32} />
+          <DollarSign size={26} />
           {esFinalizado ? 'MODIFICAR MONTO' : 'FINALIZAR CITA'}
         </button>
       </div>

@@ -384,10 +384,10 @@ export default function Mascotas() {
   return (
     <div className="animate-in fade-in duration-300 pb-20">
       {/* Encabezado */}
-      <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+      <header className="flex justify-between items-center gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight">Directorio de Mascotas</h1>
-          <p className="text-xl text-gray-400 mt-1">{perros.length} perritos registrados en total</p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Directorio de Mascotas</h1>
+          <p className="text-base sm:text-xl text-gray-400 mt-1">{perros.length} perritos registrados en total</p>
         </div>
         <button
           onClick={() => {
@@ -396,21 +396,21 @@ export default function Mascotas() {
             setExpandedId(null);
             setEditingId(null);
           }}
-          className="bg-black text-white p-5 rounded-full shadow-lg hover:scale-105 active:scale-95 transition flex items-center justify-center self-start sm:self-auto"
+          className="bg-black text-white p-3.5 sm:p-5 rounded-full shadow-lg hover:scale-105 active:scale-95 transition flex items-center justify-center flex-shrink-0"
         >
-          <Plus size={36} />
+          <Plus size={28} />
         </button>
       </header>
 
       {/* Barra de búsqueda */}
-      <div className="relative mb-8">
-        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" size={28} />
+      <div className="relative mb-6 sm:mb-8">
+        <Search className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-gray-400" size={24} />
         <input
           type="text"
           placeholder="Buscar por perrito, dueño o raza..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full pl-16 pr-6 py-6 text-2xl bg-white rounded-3xl border border-gray-100 shadow-sm outline-blue-500 font-medium"
+          className="w-full pl-12 sm:pl-16 pr-4 sm:pr-6 py-3.5 sm:py-5 text-lg sm:text-2xl bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm outline-blue-500 font-medium"
         />
       </div>
 
@@ -445,54 +445,65 @@ export default function Mascotas() {
               {/* Tarjeta principal clickeable: despliega el menú justo aquí */}
               <div
                 onClick={() => toggleExpand(p.id)}
-                className="p-6 sm:p-8 flex items-center justify-between cursor-pointer select-none"
+                className="p-4 sm:p-7 cursor-pointer select-none"
               >
-                <div className="flex-1 min-w-0 pr-4">
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <h3 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
-                      🐶 {p.nombre}
-                    </h3>
-                    {p.raza && (
-                      <span className="text-xl font-semibold bg-gray-100 text-gray-600 px-3 py-1 rounded-xl">
-                        {p.raza}
-                      </span>
-                    )}
-                    <span className="text-lg font-bold bg-blue-50 text-blue-700 px-3 py-1 rounded-xl">
-                      🎂 {p.edad != null ? `${p.edad} ${p.edad === 1 ? 'año' : 'años'}` : 'Sin edad'}
-                    </span>
-                    {p.tamano && (
-                      <span className="text-lg font-bold bg-purple-50 text-purple-700 px-3 py-1 rounded-xl">
-                        📏 {p.tamano}
-                      </span>
-                    )}
-                  </div>
+                {/* Fila 1: Nombre de la mascota y botones de acción */}
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight capitalize flex items-center gap-2">
+                    <span>🐶</span> {p.nombre}
+                  </h3>
 
-                  <p className="text-xl sm:text-2xl text-gray-500 font-medium mt-2">
-                    Tutor: <span className="text-gray-900 font-bold">{p.tutor?.nombre || 'Sin tutor'}</span> •{' '}
-                    <span className="text-blue-600 font-mono font-semibold">{p.tutor?.telefono || 'Sin teléfono'}</span>
-                  </p>
+                  <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={(e) => abrirEdicionInline(p, e)}
+                      className="p-2 sm:p-2.5 text-blue-600 hover:bg-blue-50 active:scale-95 rounded-xl sm:rounded-2xl transition"
+                      title="Editar ficha"
+                    >
+                      <Edit2 size={20} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => eliminarMascota(p.id, e)}
+                      className="p-2 sm:p-2.5 text-red-500 hover:bg-red-50 active:scale-95 rounded-xl sm:rounded-2xl transition"
+                      title="Eliminar mascota"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                    <div className="p-1.5 sm:p-2 text-gray-400">
+                      {isExpanded ? <ChevronUp size={22} /> : <ChevronDown size={22} />}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={(e) => abrirEdicionInline(p, e)}
-                    className="p-3 text-blue-600 hover:bg-blue-50 rounded-2xl transition"
-                    title="Editar ficha"
-                  >
-                    <Edit2 size={24} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => eliminarMascota(p.id, e)}
-                    className="p-3 text-red-500 hover:bg-red-50 rounded-2xl transition"
-                    title="Eliminar mascota"
-                  >
-                    <Trash2 size={24} />
-                  </button>
-                  <div className="p-3 text-gray-400">
-                    {isExpanded ? <ChevronUp size={28} /> : <ChevronDown size={28} />}
-                  </div>
+                {/* Fila 2: Chips / Badges en fila horizontal */}
+                <div className="flex items-center gap-2 flex-wrap mt-2">
+                  {p.raza && (
+                    <span className="text-sm sm:text-base font-semibold bg-gray-100 text-gray-700 px-2.5 py-1 rounded-lg sm:rounded-xl">
+                      {p.raza}
+                    </span>
+                  )}
+                  <span className="text-xs sm:text-sm font-bold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg sm:rounded-xl">
+                    🎂 {p.edad != null ? `${p.edad} ${p.edad === 1 ? 'año' : 'años'}` : 'Sin edad'}
+                  </span>
+                  {p.tamano && (
+                    <span className="text-xs sm:text-sm font-bold bg-purple-50 text-purple-700 px-2.5 py-1 rounded-lg sm:rounded-xl">
+                      📏 {p.tamano}
+                    </span>
+                  )}
+                </div>
+
+                {/* Fila 3: Tutor y Teléfono */}
+                <div className="flex items-center gap-2 flex-wrap mt-2.5 text-sm sm:text-lg text-gray-500 font-medium">
+                  <span>Tutor: <strong className="text-gray-900">{p.tutor?.nombre || 'Sin tutor'}</strong></span>
+                  {p.tutor?.telefono && (
+                    <>
+                      <span className="text-gray-300">•</span>
+                      <span className="text-blue-600 font-mono font-semibold whitespace-nowrap">
+                        📞 {p.tutor.telefono}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
 

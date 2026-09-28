@@ -204,27 +204,27 @@ export default function Productos() {
   return (
     <div className="animate-in fade-in duration-300 pb-20">
       {/* ── HEADER ── */}
-      <header className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
+      <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 sm:mb-6">
         <div>
-          <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight">Inventario</h1>
-          <p className="text-xl text-gray-500 mt-1 font-medium">
-            Control simple de duración de shampoos y mantención de herramientas.
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Inventario</h1>
+          <p className="text-sm sm:text-lg text-gray-500 mt-0.5 font-medium">
+            Control de duración de shampoos y mantención de herramientas.
           </p>
         </div>
 
         <button
           onClick={() => tab === 'insumos' ? setShowInsumoModal(true) : setShowHerramientaModal(true)}
-          className="bg-black hover:bg-gray-800 active:scale-95 text-white px-7 py-4 rounded-2xl shadow-lg font-bold text-xl flex items-center gap-2 transition self-start md:self-auto"
+          className="w-full sm:w-auto bg-black hover:bg-gray-800 active:scale-95 text-white px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl shadow-md font-bold text-sm sm:text-lg flex items-center justify-center gap-2 transition"
         >
-          <Plus size={26} /> {tab === 'insumos' ? 'Nuevo Insumo' : 'Nueva Herramienta'}
+          <Plus size={20} /> {tab === 'insumos' ? 'Nuevo Insumo' : 'Nueva Herramienta'}
         </button>
       </header>
 
       {/* ── SEGMENTED CONTROL / TABS ── */}
-      <div className="flex gap-3 p-1.5 bg-gray-200/80 rounded-2xl w-full max-w-md mb-8">
+      <div className="flex gap-1.5 p-1 bg-gray-200/80 rounded-xl sm:rounded-2xl w-full max-w-sm mb-6">
         <button
           onClick={() => setTab('insumos')}
-          className={`flex-1 py-3 px-4 rounded-xl font-bold text-xl transition flex items-center justify-center gap-2 ${
+          className={`flex-1 py-2 px-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-base whitespace-nowrap transition flex items-center justify-center gap-1.5 ${
             tab === 'insumos'
               ? 'bg-white text-gray-900 shadow-sm'
               : 'text-gray-500 hover:text-gray-800'
@@ -234,7 +234,7 @@ export default function Productos() {
         </button>
         <button
           onClick={() => setTab('herramientas')}
-          className={`flex-1 py-3 px-4 rounded-xl font-bold text-xl transition flex items-center justify-center gap-2 ${
+          className={`flex-1 py-2 px-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-base whitespace-nowrap transition flex items-center justify-center gap-1.5 ${
             tab === 'herramientas'
               ? 'bg-white text-gray-900 shadow-sm'
               : 'text-gray-500 hover:text-gray-800'
@@ -248,8 +248,8 @@ export default function Productos() {
       {/* TAB 1: SHAMPOOS E INSUMOS                   */}
       {/* ═══════════════════════════════════════════ */}
       {tab === 'insumos' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {insumos.map(item => {
               const enUso = item.estado === 'EN_USO';
               const dias = calcularDias(item.fechaApertura, item.fechaTermino);
@@ -257,22 +257,22 @@ export default function Productos() {
               return (
                 <div
                   key={item.id}
-                  className={`bg-white p-7 rounded-3xl shadow-sm border transition flex flex-col justify-between ${
+                  className={`bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl shadow-sm border transition flex flex-col justify-between ${
                     enUso ? 'border-gray-100 hover:border-blue-200' : 'border-gray-200/60 bg-gray-50/60 opacity-80'
                   }`}
                 >
                   <div>
                     {/* Fila superior: Nombre y Estado */}
-                    <div className="flex justify-between items-start gap-3">
+                    <div className="flex justify-between items-start gap-2">
                       <div>
-                        <h2 className="text-3xl font-extrabold text-gray-900 leading-snug">
+                        <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 leading-snug">
                           {item.nombre}
                         </h2>
-                        <p className="text-lg text-gray-400 font-semibold mt-0.5">
+                        <p className="text-sm sm:text-base text-gray-400 font-semibold mt-0.5">
                           Formato: {item.capacidad}
                         </p>
                       </div>
-                      <span className={`px-4 py-1.5 rounded-full text-base font-bold ${
+                      <span className={`px-2.5 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap flex-shrink-0 ${
                         enUso
                           ? 'bg-green-100 text-green-800 border border-green-200'
                           : 'bg-gray-200 text-gray-700'
@@ -282,19 +282,19 @@ export default function Productos() {
                     </div>
 
                     {/* Métricas clave */}
-                    <div className="grid grid-cols-2 gap-3 my-6">
-                      <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Apertura</p>
-                        <p className="text-xl font-extrabold text-gray-800 mt-1">
+                    <div className="grid grid-cols-2 gap-2.5 sm:gap-3 my-4 sm:my-5">
+                      <div className="p-3 sm:p-4 bg-gray-50 rounded-xl sm:rounded-2xl border border-gray-100">
+                        <p className="text-[11px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Apertura</p>
+                        <p className="text-sm sm:text-base font-extrabold text-gray-800 mt-0.5 whitespace-nowrap font-mono">
                           📅 {item.fechaApertura}
                         </p>
                       </div>
 
-                      <div className="p-4 bg-blue-50/60 rounded-2xl border border-blue-100">
-                        <p className="text-xs font-bold text-blue-500 uppercase tracking-wider">
+                      <div className="p-3 sm:p-4 bg-blue-50/60 rounded-xl sm:rounded-2xl border border-blue-100">
+                        <p className="text-[11px] sm:text-xs font-bold text-blue-500 uppercase tracking-wider">
                           {enUso ? 'Tiempo en Uso' : 'Duración Total'}
                         </p>
-                        <p className="text-2xl font-black text-blue-900 mt-1">
+                        <p className="text-lg sm:text-xl font-black text-blue-900 mt-0.5 whitespace-nowrap">
                           ⏳ {dias} {dias === 1 ? 'día' : 'días'}
                         </p>
                       </div>
@@ -302,7 +302,7 @@ export default function Productos() {
 
                     {/* Costo si existe */}
                     {item.costoTotal != null && (
-                      <p className="text-lg text-gray-600 font-medium mb-4">
+                      <p className="text-sm sm:text-base text-gray-600 font-medium mb-3">
                         Costo: <strong>${Number(item.costoTotal).toLocaleString()}</strong>
                         {item.costoPorLitro && (
                           <span className="text-gray-400 font-normal"> (${Number(item.costoPorLitro).toLocaleString()}/L)</span>
@@ -311,27 +311,27 @@ export default function Productos() {
                     )}
 
                     {item.fechaTermino && (
-                      <p className="text-base text-gray-400 italic mb-4">
+                      <p className="text-xs sm:text-sm text-gray-400 italic mb-3">
                         Se terminó el: {item.fechaTermino} (duró {dias} días en la peluquería).
                       </p>
                     )}
                   </div>
 
                   {/* Acciones */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100 mt-2">
+                  <div className="flex items-center gap-2 pt-3 sm:pt-4 border-t border-gray-100 mt-2">
                     {enUso ? (
                       <button
                         onClick={() => marcarTerminado(item.id)}
-                        className="flex-1 py-3.5 px-4 bg-orange-50 hover:bg-orange-100 text-orange-800 font-bold text-lg rounded-2xl transition flex items-center justify-center gap-2"
+                        className="flex-1 py-2.5 sm:py-3 px-3 bg-orange-50 hover:bg-orange-100 active:scale-98 text-orange-800 font-bold text-xs sm:text-sm rounded-xl transition flex items-center justify-center gap-1.5"
                       >
-                        <Check size={20} /> Marcar Terminado
+                        <Check size={16} /> Marcar Terminado
                       </button>
                     ) : (
                       <button
                         onClick={() => reabrirOReemplazar(item.id)}
-                        className="flex-1 py-3.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-lg rounded-2xl transition flex items-center justify-center gap-2"
+                        className="flex-1 py-2.5 sm:py-3 px-3 bg-blue-50 hover:bg-blue-100 active:scale-98 text-blue-700 font-bold text-xs sm:text-sm rounded-xl transition flex items-center justify-center gap-1.5"
                       >
-                        <RefreshCw size={20} /> Reemplazar (Nuevo Bidón)
+                        <RefreshCw size={16} /> Reemplazar Bidón
                       </button>
                     )}
 
@@ -367,12 +367,12 @@ export default function Productos() {
                 >
                   <div>
                     {/* Fila superior: Nombre y Estado */}
-                    <div className="flex justify-between items-start gap-3">
+                    <div className="flex justify-between items-start gap-2">
                       <div>
-                        <h2 className="text-3xl font-extrabold text-gray-900 leading-snug">
+                        <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 leading-snug">
                           {tool.nombre}
                         </h2>
-                        <p className="text-lg text-gray-400 font-semibold mt-0.5">
+                        <p className="text-sm sm:text-base text-gray-400 font-semibold mt-0.5">
                           {tool.tipo}
                         </p>
                       </div>
@@ -381,7 +381,7 @@ export default function Productos() {
                       <select
                         value={tool.estado}
                         onChange={e => cambiarEstadoHerramienta(tool.id, e.target.value)}
-                        className={`font-bold text-base px-3 py-1.5 rounded-full border outline-none cursor-pointer ${
+                        className={`font-bold text-xs sm:text-sm px-2.5 sm:px-3 py-1 rounded-full border outline-none cursor-pointer flex-shrink-0 ${
                           tool.estado === 'OPERATIVA'
                             ? 'bg-green-100 text-green-800 border-green-200'
                             : tool.estado === 'MANTENCION_PENDIENTE'
@@ -390,27 +390,27 @@ export default function Productos() {
                         }`}
                       >
                         <option value="OPERATIVA">🟢 Operativa</option>
-                        <option value="MANTENCION_PENDIENTE">🟡 Requiere Revisión</option>
+                        <option value="MANTENCION_PENDIENTE">🟡 Revisión</option>
                         <option value="EN_TALLER">🔴 En Taller</option>
                       </select>
                     </div>
 
                     {/* Métrica de último mantenimiento */}
-                    <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 my-6 flex items-center justify-between">
+                    <div className="p-3 sm:p-4 bg-gray-50 rounded-xl sm:rounded-2xl border border-gray-100 my-4 sm:my-5 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                          Último Mantenimiento / Afilado
+                        <p className="text-[11px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">
+                          Última Mantención
                         </p>
-                        <p className="text-xl font-extrabold text-gray-800 mt-1">
+                        <p className="text-sm sm:text-base font-extrabold text-gray-800 mt-0.5 whitespace-nowrap font-mono">
                           📅 {tool.ultimoMantenimiento || 'Sin registro'}
                         </p>
                       </div>
 
                       <div className="text-right">
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                        <p className="text-[11px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">
                           Hace
                         </p>
-                        <p className={`text-2xl font-black mt-1 ${esCritico ? 'text-amber-600' : 'text-gray-800'}`}>
+                        <p className={`text-lg sm:text-2xl font-black mt-0.5 ${esCritico ? 'text-amber-600' : 'text-gray-800'}`}>
                           {dias} {dias === 1 ? 'día' : 'días'}
                         </p>
                       </div>
@@ -418,9 +418,9 @@ export default function Productos() {
 
                     {/* Notas de la última mantención */}
                     {tool.notasMantenimiento && (
-                      <div className="p-4 bg-purple-50/40 rounded-2xl border border-purple-100 mb-4 text-lg text-gray-700">
-                        <strong className="text-purple-900 block text-sm uppercase tracking-wider mb-1 font-bold">
-                          📝 Último Trabajo Realizado:
+                      <div className="p-3 sm:p-4 bg-purple-50/40 rounded-xl sm:rounded-2xl border border-purple-100 mb-3 text-sm sm:text-base text-gray-700">
+                        <strong className="text-purple-900 block text-xs uppercase tracking-wider mb-0.5 font-bold">
+                          📝 Último Trabajo:
                         </strong>
                         {tool.notasMantenimiento}
                       </div>
@@ -428,15 +428,15 @@ export default function Productos() {
                   </div>
 
                   {/* Acciones de la Herramienta */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100 mt-2">
+                  <div className="flex items-center gap-2 pt-3 sm:pt-4 border-t border-gray-100 mt-2">
                     <button
                       onClick={() => {
                         setItemMantencionRapida(tool);
                         setNotaRapida('');
                       }}
-                      className="flex-1 py-3.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg rounded-2xl shadow-md transition flex items-center justify-center gap-2"
+                      className="flex-1 py-2.5 sm:py-3 px-3 bg-purple-600 hover:bg-purple-700 active:scale-98 text-white font-bold text-xs sm:text-sm rounded-xl shadow-sm transition flex items-center justify-center gap-1.5"
                     >
-                      <Wrench size={20} /> Registrar Mantención Hoy
+                      <Wrench size={16} /> Mantención Hoy
                     </button>
 
                     <button

@@ -101,112 +101,112 @@ export default function DashboardHome({ onNavigate, onSelectCita }) {
     <div className="animate-in fade-in duration-300 pb-20 space-y-8">
       {/* ── CABECERA ── */}
       <header className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <img
             src="/logo.png"
             alt="LilyLuz Spa"
-            className="w-20 h-20 rounded-full object-contain shadow-sm border border-amber-100/60 bg-[#FBF9F5] flex-shrink-0"
+            className="hidden md:block w-20 h-20 rounded-full object-contain shadow-sm border border-amber-100/60 bg-[#FBF9F5] flex-shrink-0"
           />
           <div>
-            <span className="text-blue-600 font-extrabold text-lg uppercase tracking-wider">
+            <span className="text-blue-600 font-extrabold text-xs sm:text-sm md:text-lg uppercase tracking-wider block">
               LilyLuz Spa • Panel Principal
             </span>
-            <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight mt-0.5">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mt-0.5">
               Resumen del Día
             </h1>
-            <p className="text-2xl text-gray-500 font-medium mt-0.5">
+            <p className="text-sm sm:text-lg md:text-2xl text-gray-500 font-medium mt-0.5 capitalize">
               {fechaActualObj.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
             </p>
           </div>
         </div>
 
         {/* Atajos Rápidos */}
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <button
             onClick={() => onNavigate && onNavigate('agenda')}
-            className="bg-black hover:bg-gray-800 text-white px-6 py-4 rounded-2xl font-bold text-xl shadow-md transition flex items-center gap-2"
+            className="flex-1 sm:flex-initial bg-black hover:bg-gray-800 active:scale-95 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-xl shadow-md transition flex items-center justify-center gap-2"
           >
-            <Calendar size={22} /> Ir a Agenda
+            <Calendar size={18} /> Ir a Agenda
           </button>
           <button
             onClick={() => onNavigate && onNavigate('mascotas')}
-            className="bg-white border border-gray-200 text-gray-800 hover:bg-gray-50 px-6 py-4 rounded-2xl font-bold text-xl shadow-sm transition flex items-center gap-2"
+            className="flex-1 sm:flex-initial bg-white border border-gray-200 text-gray-800 hover:bg-gray-50 active:scale-95 px-4 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-xl shadow-sm transition flex items-center justify-center gap-2"
           >
-            <Dog size={22} /> Mascotas
+            <Dog size={18} /> Mascotas
           </button>
         </div>
       </header>
 
-      {/* ── 4 TARJETAS PRINCIPALES DE MÉTRICAS ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {/* ── 4 TARJETAS PRINCIPALES DE MÉTRICAS (GRID 2x2 EN MÓVIL, 4 EN DESKTOP) ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
         {/* 1. Citas Hoy */}
-        <div className="bg-white p-7 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between">
+        <div className="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start">
-            <span className="text-gray-400 font-bold text-lg">Citas de Hoy</span>
-            <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-              <Calendar size={28} />
+            <span className="text-gray-400 font-bold text-sm sm:text-lg">Citas de Hoy</span>
+            <div className="p-2 sm:p-3 bg-blue-50 text-blue-600 rounded-xl sm:rounded-2xl">
+              <Calendar size={20} className="sm:w-7 sm:h-7" />
             </div>
           </div>
-          <div className="mt-4">
-            <p className="text-5xl font-black text-gray-900">
-              {citasHoy.length} <span className="text-2xl font-bold text-gray-400">/ 4 max</span>
+          <div className="mt-2 sm:mt-4">
+            <p className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900">
+              {citasHoy.length} <span className="text-lg sm:text-2xl font-bold text-gray-400">/ 4</span>
             </p>
-            <p className="text-base text-gray-500 font-medium mt-2">
-              {citasHoyCerradas.length} finalizada(s) • {enAtencionHoy} en proceso
+            <p className="text-xs sm:text-sm text-gray-500 font-medium mt-1 sm:mt-2 leading-tight">
+              {citasHoyCerradas.length} finalizada{citasHoyCerradas.length === 1 ? '' : 's'} • {enAtencionHoy} en curso
             </p>
           </div>
         </div>
 
         {/* 2. Cobrado Hoy */}
-        <div className="bg-white p-7 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between">
+        <div className="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start">
-            <span className="text-gray-400 font-bold text-lg">Cobrado Hoy</span>
-            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
-              <DollarSign size={28} />
+            <span className="text-gray-400 font-bold text-sm sm:text-lg">Cobrado Hoy</span>
+            <div className="p-2 sm:p-3 bg-emerald-50 text-emerald-600 rounded-xl sm:rounded-2xl">
+              <DollarSign size={20} className="sm:w-7 sm:h-7" />
             </div>
           </div>
-          <div className="mt-4">
-            <p className="text-4xl font-black text-emerald-700">
+          <div className="mt-2 sm:mt-4">
+            <p className="text-2xl sm:text-3xl md:text-4xl font-black text-emerald-700">
               ${cobradoHoy.toLocaleString()}
             </p>
-            <p className="text-base text-gray-500 font-medium mt-2">
-              De {citasHoyCerradas.length} atención(es) completada(s)
+            <p className="text-xs sm:text-sm text-gray-500 font-medium mt-1 sm:mt-2 leading-tight">
+              {citasHoyCerradas.length === 1 ? '1 servicio cobrado' : `${citasHoyCerradas.length} servicios cobrados`}
             </p>
           </div>
         </div>
 
         {/* 3. Ingresos del Mes */}
-        <div className="bg-white p-7 rounded-3xl border border-purple-100 shadow-sm flex flex-col justify-between">
+        <div className="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-purple-100 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start">
-            <span className="text-purple-600 font-bold text-lg">Mes de {nombreMesActual}</span>
-            <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl">
-              <TrendingUp size={28} />
+            <span className="text-purple-600 font-bold text-sm sm:text-lg truncate">{nombreMesActual}</span>
+            <div className="p-2 sm:p-3 bg-purple-50 text-purple-600 rounded-xl sm:rounded-2xl">
+              <TrendingUp size={20} className="sm:w-7 sm:h-7" />
             </div>
           </div>
-          <div className="mt-4">
-            <p className="text-4xl font-black text-purple-900">
+          <div className="mt-2 sm:mt-4">
+            <p className="text-2xl sm:text-3xl md:text-4xl font-black text-purple-900">
               ${ingresosMes.toLocaleString()}
             </p>
-            <p className="text-base text-gray-500 font-medium mt-2">
-              {citasDelMes.length} cita(s) cobradas este mes
+            <p className="text-xs sm:text-sm text-gray-500 font-medium mt-1 sm:mt-2 leading-tight">
+              {citasDelMes.length === 1 ? '1 servicio cobrado' : `${citasDelMes.length} servicios cobrados`}
             </p>
           </div>
         </div>
 
         {/* 4. Total Histórico Acumulado */}
-        <div className="bg-white p-7 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between">
+        <div className="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start">
-            <span className="text-gray-400 font-bold text-lg">Total Histórico</span>
-            <div className="p-3 bg-gray-100 text-gray-700 rounded-2xl">
-              <Sparkles size={28} />
+            <span className="text-gray-400 font-bold text-sm sm:text-lg">Histórico</span>
+            <div className="p-2 sm:p-3 bg-gray-100 text-gray-700 rounded-xl sm:rounded-2xl">
+              <Sparkles size={20} className="sm:w-7 sm:h-7" />
             </div>
           </div>
-          <div className="mt-4">
-            <p className="text-4xl font-black text-gray-900">
+          <div className="mt-2 sm:mt-4">
+            <p className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900">
               ${ingresosTotales.toLocaleString()}
             </p>
-            <p className="text-base text-gray-500 font-medium mt-2">
-              {citasHistoricas.length} perritos atendidos en total
+            <p className="text-xs sm:text-sm text-gray-500 font-medium mt-1 sm:mt-2 leading-tight">
+              {citasHistoricas.length === 1 ? '1 perrito atendido' : `${citasHistoricas.length} perritos atendidos`}
             </p>
           </div>
         </div>

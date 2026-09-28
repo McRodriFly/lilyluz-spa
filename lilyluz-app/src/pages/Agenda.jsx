@@ -188,11 +188,11 @@ export default function Agenda({ onSelectCita }) {
   return (
     <div className="animate-in fade-in duration-300 pb-20">
       {/* ── HEADER ── */}
-      <header className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
+      <header className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight">Agenda</h1>
-          <div className="flex items-center gap-3 mt-2 flex-wrap">
-            <span className={`px-4 py-1.5 rounded-full text-lg font-bold ${
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Agenda</h1>
+          <div className="flex items-center gap-2 sm:gap-3 mt-2 flex-wrap">
+            <span className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-base sm:text-lg font-bold ${
               totalCitasHoy === 0 ? 'bg-gray-100 text-gray-600' :
               totalCitasHoy < 4 ? 'bg-green-100 text-green-800' :
               'bg-orange-100 text-orange-800'
@@ -200,7 +200,7 @@ export default function Agenda({ onSelectCita }) {
               🐾 {totalCitasHoy} de 4 perritos (máx)
             </span>
             {totalCitasHoy > 4 && (
-              <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-bold">
+              <span className="px-2.5 sm:px-3 py-0.5 sm:py-1 bg-purple-100 text-purple-800 rounded-full text-xs sm:text-sm font-bold">
                 +{totalCitasHoy - 4} cupo(s) extra
               </span>
             )}
@@ -208,12 +208,12 @@ export default function Agenda({ onSelectCita }) {
         </div>
 
         {/* Controles de fecha y botón agendar */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="relative">
-            <Calendar size={22} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap w-full lg:w-auto">
+          <div className="relative flex-1 sm:flex-initial">
+            <Calendar size={20} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             <input
               type="date"
-              className="pl-12 pr-5 py-4 text-2xl font-bold bg-white rounded-2xl shadow-sm border border-gray-200 outline-blue-500"
+              className="w-full sm:w-auto pl-10 pr-3 sm:pr-5 py-3 sm:py-4 text-lg sm:text-xl font-bold bg-white rounded-2xl shadow-sm border border-gray-200 outline-blue-500"
               value={vistaFecha}
               onChange={e => setVistaFecha(e.target.value)}
             />
@@ -221,16 +221,16 @@ export default function Agenda({ onSelectCita }) {
 
           <button
             onClick={() => setVistaFecha(new Date().toISOString().split('T')[0])}
-            className="px-5 py-4 bg-white border border-gray-200 text-gray-700 font-bold text-xl rounded-2xl shadow-sm hover:bg-gray-50 transition"
+            className="px-4 sm:px-5 py-3 sm:py-4 bg-white border border-gray-200 text-gray-700 font-bold text-lg sm:text-xl rounded-2xl shadow-sm hover:bg-gray-50 active:scale-95 transition"
           >
             Hoy
           </button>
 
           <button
             onClick={abrirNuevoForm}
-            className="bg-black hover:bg-gray-800 active:scale-95 text-white px-7 py-4 rounded-2xl shadow-lg font-bold text-xl flex items-center gap-2 transition"
+            className="w-full sm:w-auto bg-black hover:bg-gray-800 active:scale-95 text-white px-5 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-lg font-bold text-lg sm:text-xl flex items-center justify-center gap-2 transition"
           >
-            <Plus size={26} /> Agendar Cita
+            <Plus size={22} /> Agendar Cita
           </button>
         </div>
       </header>
@@ -426,19 +426,19 @@ export default function Agenda({ onSelectCita }) {
             >
               {/* Información Principal */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-4 flex-wrap">
-                  <span className="font-mono text-2xl sm:text-3xl font-extrabold text-blue-600 bg-blue-50 px-4 py-2 rounded-2xl border border-blue-100">
+                <div className="flex items-center gap-2.5 sm:gap-4 flex-wrap">
+                  <span className="whitespace-nowrap font-mono text-base sm:text-2xl font-extrabold text-blue-600 bg-blue-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl border border-blue-100">
                     🕐 {horaInicio} - {horaFinStr} hrs
                   </span>
-                  <h3 className="text-3xl sm:text-4xl font-extrabold text-gray-900">
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
                     🐶 {cita.mascota?.nombre}
                   </h3>
-                  <span className={`px-4 py-1.5 rounded-full text-base font-bold ${status.color}`}>
+                  <span className={`px-3 py-1 rounded-full text-sm sm:text-base font-bold ${status.color}`}>
                     {status.label}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4 mt-3 text-xl text-gray-500 font-medium flex-wrap">
+                <div className="flex items-center gap-3 sm:gap-4 mt-2 sm:mt-3 text-base sm:text-xl text-gray-500 font-medium flex-wrap">
                   <span>
                     Raza: <strong className="text-gray-800">{cita.mascota?.raza || 'Mestizo'}</strong>
                   </span>

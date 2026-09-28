@@ -53,20 +53,20 @@ export default function Finanzas() {
   const ingresosTotal = citasPagadas.reduce((acc, c) => acc + (c.montoRecaudado || 0), 0) || 0;
 
   return (
-    <div className="animate-in fade-in duration-300 pb-16">
-      <header className="mb-8 flex items-center justify-between">
-        <h1 className="text-5xl font-extrabold tracking-tight text-gray-900">Finanzas</h1>
+    <div className="animate-in fade-in duration-300 pb-20">
+      <header className="mb-6 sm:mb-8 flex items-center justify-between">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">Finanzas</h1>
       </header>
 
       {/* Recaudación Total */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 flex items-center gap-6 shadow-sm">
-          <div className="p-5 bg-green-50 text-green-600 rounded-2xl">
-            <TrendingUp size={48} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-gray-100 flex items-center gap-4 sm:gap-6 shadow-sm">
+          <div className="p-3.5 sm:p-5 bg-green-50 text-green-600 rounded-xl sm:rounded-2xl">
+            <TrendingUp size={36} className="sm:w-12 sm:h-12" />
           </div>
           <div>
-            <p className="text-2xl font-bold text-gray-500">Recaudación Total</p>
-            <p className="text-5xl font-extrabold text-gray-900">
+            <p className="text-base sm:text-xl font-bold text-gray-500">Recaudación Total</p>
+            <p className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900">
               ${ingresosTotal.toLocaleString()}
             </p>
           </div>
@@ -75,22 +75,22 @@ export default function Finanzas() {
 
       {/* Cuentas Por Cobrar */}
       {citasPendientes.length > 0 && (
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-orange-100 mb-8">
-          <h2 className="text-3xl font-bold mb-6 text-orange-600 flex items-center gap-3">
-            <AlertCircle /> Servicios Por Cobrar
+        <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-orange-100 mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-orange-600 flex items-center gap-2 sm:gap-3">
+            <AlertCircle size={26} /> Servicios Por Cobrar
           </h2>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {citasPendientes.map(c => (
-              <div key={c.id} className="p-5 bg-orange-50 rounded-2xl flex justify-between items-center border border-orange-200">
+              <div key={c.id} className="p-4 sm:p-5 bg-orange-50 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-orange-200">
                 <div>
-                  <p className="font-bold text-3xl text-gray-900">🐶 {c.mascota?.nombre}</p>
-                  <p className="text-orange-800 text-lg font-medium mt-1">
+                  <p className="font-bold text-2xl sm:text-3xl text-gray-900">🐶 {c.mascota?.nombre}</p>
+                  <p className="text-orange-800 text-base sm:text-lg font-medium mt-0.5">
                     Cita: {c.fecha} — {c.hora?.substring(0, 5)} hrs
                   </p>
                 </div>
                 <button
                   onClick={() => abrirPago(c)}
-                  className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-2xl px-8 py-4 rounded-2xl transition shadow-md"
+                  className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold text-lg sm:text-xl px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl transition shadow-md text-center"
                 >
                   Registrar Cobro
                 </button>
@@ -101,25 +101,25 @@ export default function Finanzas() {
       )}
 
       {/* Historial Pagados */}
-      <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-        <h2 className="text-3xl font-bold mb-6">Detalle de Ingresos Cobrados</h2>
-        <div className="space-y-4">
+      <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Detalle de Ingresos Cobrados</h2>
+        <div className="space-y-3 sm:space-y-4">
           {citasPagadas.length === 0 && (
-            <p className="text-xl text-gray-400 py-6 text-center">No hay cobros registrados todavía.</p>
+            <p className="text-lg sm:text-xl text-gray-400 py-6 text-center">No hay cobros registrados todavía.</p>
           )}
           {citasPagadas
             .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
             .map(c => (
-              <div key={c.id} className="p-5 bg-gray-50 rounded-2xl flex justify-between items-center border border-gray-100">
+              <div key={c.id} className="p-4 sm:p-5 bg-gray-50 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-gray-100">
                 <div>
-                  <p className="font-bold text-2xl text-gray-800">🐶 {c.mascota?.nombre}</p>
-                  <p className="text-gray-500 text-lg">{c.fecha} — {c.hora?.substring(0, 5)} hrs</p>
+                  <p className="font-bold text-xl sm:text-2xl text-gray-800">🐶 {c.mascota?.nombre}</p>
+                  <p className="text-gray-500 text-sm sm:text-base">{c.fecha} — {c.hora?.substring(0, 5)} hrs</p>
                   {c.detalleVisita && (
-                    <p className="text-gray-600 text-base mt-1 italic">"{c.detalleVisita}"</p>
+                    <p className="text-gray-600 text-sm sm:text-base mt-1 italic">"{c.detalleVisita}"</p>
                   )}
                 </div>
-                <div className="text-right">
-                  <p className="text-4xl font-extrabold text-purple-800">
+                <div className="self-end sm:self-auto text-right">
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-purple-800">
                     ${(c.montoRecaudado || 0).toLocaleString()}
                   </p>
                 </div>
