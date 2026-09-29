@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, DollarSign, TrendingUp, Sparkles, Dog, Wrench, ChevronRight, Plus, AlertTriangle, CheckCircle2, Scissors } from 'lucide-react';
+import { Calendar, Clock, Dog, Wrench, ChevronRight, Plus, AlertTriangle, CheckCircle2, Sparkles } from 'lucide-react';
 
-const API_URL = `http://${window.location.hostname}:8080/api`;
+import { API_URL } from '../api';
 const STORAGE_KEY_HERRAMIENTAS = 'lilyluz_inventario_herramientas';
 const STORAGE_KEY_INSUMOS = 'lilyluz_inventario_insumos';
 
@@ -14,14 +14,9 @@ const STATUS_BADGE = {
   PAGADO:     { label: 'Cerrada', color: 'bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold' },
 };
 
-const MESES = [
-  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-];
-
 export default function DashboardHome({ onNavigate, onSelectCita }) {
   const [citasHoy, setCitasHoy] = useState([]);
-  const [todasLasCitas, setTodasLasCitas] = useState([]);
+  const [totalMascotas, setTotalMascotas] = useState(0);
   const [cargando, setCargando] = useState(true);
 
   // Inventario local
@@ -30,29 +25,23 @@ export default function DashboardHome({ onNavigate, onSelectCita }) {
 
   const fechaActualObj = new Date();
   const hoyStr = fechaActualObj.toISOString().split('T')[0];
-  const mesActualPrefijo = hoyStr.substring(0, 7); // 'YYYY-MM'
-  const nombreMesActual = MESES[fechaActualObj.getMonth()];
 
   const cargarDatos = async () => {
     try {
       setCargando(true);
-
-      // 1. Citas de hoy
       const resHoy = await fetch(`${API_URL}/visitas/hoy?fecha=${hoyStr}`);
       const dataHoy = await resHoy.json();
       setCitasHoy(Array.isArray(dataHoy) ? dataHoy : []);
 
-      // 2. Todas las citas para métricas mensuales e históricas
-      const resTodas = await fetch(`${API_URL}/visitas`);
-      const dataTodas = await resTodas.json();
-      setTodasLasCitas(Array.isArray(dataTodas) ? dataTodas : []);
+      const resMasc = await fetch(`${API_URL}/mascotas`);
+      const dataMasc = await resMasc.json();
+      setTotalMascotas(Array.isArray(dataMasc) ? dataMasc.length : 0);
     } catch (e) {
       console.error('Error cargando métricas en dashboard:', e);
     } finally {
       setCargando(false);
     }
 
-    // 3. Cargar inventario desde localStorage
     try {
       const hSaved = localStorage.getItem(STORAGE_KEY_HERRAMIENTAS);
       if (hSaved) setHerramientas(JSON.parse(hSaved));
@@ -61,35 +50,18 @@ export default function DashboardHome({ onNavigate, onSelectCita }) {
     } catch (_) {}
   };
 
-  useEffect(() => {
-    cargarDatos();
-  }, []);
-
-  // ── CÁLCULO DE INGRESOS Y MÉTRICAS ──
-  // Citas cerradas
-  const esCerrada = (c) => c.estado === 'FINALIZADA' || c.estado === 'PAGADO';
-
-  // Ingresos del mes actual
-  const citasDelMes = todasLasCitas.filter(c => c.fecha?.startsWith(mesActualPrefijo) && esCerrada(c));
-  const ingresosMes = citasDelMes.reduce((acc, c) => acc + (c.montoRecaudado || 0), 0);
-
-  // Ingresos históricos totales
-  const citasHistoricas = todasLasCitas.filter(esCerrada);
-  const ingresosTotales = citasHistoricas.reduce((acc, c) => acc + (c.montoRecaudado || 0), 0);
-
-  // Citas de hoy cerradas y cobradas
-  const citasHoyCerradas = citasHoy.filter(esCerrada);
-  const cobradoHoy = citasHoyCerradas.reduce((acc, c) => acc + (c.montoRecaudado || 0), 0);
+  useEffect(() => { cargarDatos(); }, []);
 
   // Perritos en atención ahora
   const enAtencionHoy = citasHoy.filter(c => c.estado === 'EN_PROCESO' || c.estado === 'LISTO').length;
+  const citasHoyCerradas = citasHoy.filter(c => c.estado === 'FINALIZADA' || c.estado === 'PAGADO');
 
   // Alertas de herramientas
   const herramientasAlertas = herramientas.filter(h => {
     if (h.estado !== 'OPERATIVA') return true;
     if (h.ultimoMantenimiento) {
       const diff = Math.floor((new Date() - new Date(h.ultimoMantenimiento)) / (1000 * 60 * 60 * 24));
-      return diff > 60; // más de 2 meses sin mantención
+      return diff > 60;
     }
     return false;
   });
@@ -98,7 +70,7 @@ export default function DashboardHome({ onNavigate, onSelectCita }) {
   const shampoosEnUso = insumos.filter(i => i.estado === 'EN_USO');
 
   return (
-    <div className="animate-in fade-in duration-300 pb-20 space-y-8">
+    <div className="animate-in fade-in duration-300 pb-20 space-y-6 sm:space-y-8">
       {/* ── CABECERA ── */}
       <header className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div className="flex items-center gap-3 sm:gap-4">
@@ -137,14 +109,14 @@ export default function DashboardHome({ onNavigate, onSelectCita }) {
         </div>
       </header>
 
-      {/* ── 4 TARJETAS PRINCIPALES DE MÉTRICAS (GRID 2x2 EN MÓVIL, 4 EN DESKTOP) ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+      {/* ── 3 TARJETAS SIN DINERO: Citas Hoy, Mascotas Registradas, Estado General ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5">
         {/* 1. Citas Hoy */}
         <div className="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <span className="text-gray-400 font-bold text-sm sm:text-lg">Citas de Hoy</span>
             <div className="p-2 sm:p-3 bg-blue-50 text-blue-600 rounded-xl sm:rounded-2xl">
-              <Calendar size={20} className="sm:w-7 sm:h-7" />
+              <Calendar size={20} />
             </div>
           </div>
           <div className="mt-2 sm:mt-4">
@@ -157,98 +129,90 @@ export default function DashboardHome({ onNavigate, onSelectCita }) {
           </div>
         </div>
 
-        {/* 2. Cobrado Hoy */}
+        {/* 2. Mascotas Registradas */}
         <div className="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start">
-            <span className="text-gray-400 font-bold text-sm sm:text-lg">Cobrado Hoy</span>
-            <div className="p-2 sm:p-3 bg-emerald-50 text-emerald-600 rounded-xl sm:rounded-2xl">
-              <DollarSign size={20} className="sm:w-7 sm:h-7" />
-            </div>
-          </div>
-          <div className="mt-2 sm:mt-4">
-            <p className="text-2xl sm:text-3xl md:text-4xl font-black text-emerald-700">
-              ${cobradoHoy.toLocaleString()}
-            </p>
-            <p className="text-xs sm:text-sm text-gray-500 font-medium mt-1 sm:mt-2 leading-tight">
-              {citasHoyCerradas.length === 1 ? '1 servicio cobrado' : `${citasHoyCerradas.length} servicios cobrados`}
-            </p>
-          </div>
-        </div>
-
-        {/* 3. Ingresos del Mes */}
-        <div className="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-purple-100 shadow-sm flex flex-col justify-between">
-          <div className="flex justify-between items-start">
-            <span className="text-purple-600 font-bold text-sm sm:text-lg truncate">{nombreMesActual}</span>
+            <span className="text-gray-400 font-bold text-sm sm:text-lg">Mascotas</span>
             <div className="p-2 sm:p-3 bg-purple-50 text-purple-600 rounded-xl sm:rounded-2xl">
-              <TrendingUp size={20} className="sm:w-7 sm:h-7" />
+              <Dog size={20} />
             </div>
           </div>
           <div className="mt-2 sm:mt-4">
-            <p className="text-2xl sm:text-3xl md:text-4xl font-black text-purple-900">
-              ${ingresosMes.toLocaleString()}
+            <p className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900">
+              {totalMascotas}
             </p>
             <p className="text-xs sm:text-sm text-gray-500 font-medium mt-1 sm:mt-2 leading-tight">
-              {citasDelMes.length === 1 ? '1 servicio cobrado' : `${citasDelMes.length} servicios cobrados`}
+              perritos registrados
             </p>
           </div>
         </div>
 
-        {/* 4. Total Histórico Acumulado */}
-        <div className="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between">
+        {/* 3. Estado de Herramientas */}
+        <div className={`p-4 sm:p-7 rounded-2xl sm:rounded-3xl border shadow-sm flex flex-col justify-between ${
+          herramientasAlertas.length > 0
+            ? 'bg-amber-50 border-amber-200'
+            : 'bg-white border-gray-100'
+        }`}>
           <div className="flex justify-between items-start">
-            <span className="text-gray-400 font-bold text-sm sm:text-lg">Histórico</span>
-            <div className="p-2 sm:p-3 bg-gray-100 text-gray-700 rounded-xl sm:rounded-2xl">
-              <Sparkles size={20} className="sm:w-7 sm:h-7" />
+            <span className={`font-bold text-sm sm:text-lg ${herramientasAlertas.length > 0 ? 'text-amber-600' : 'text-gray-400'}`}>
+              Herramientas
+            </span>
+            <div className={`p-2 sm:p-3 rounded-xl sm:rounded-2xl ${herramientasAlertas.length > 0 ? 'bg-amber-100 text-amber-700' : 'bg-green-50 text-green-600'}`}>
+              <Wrench size={20} />
             </div>
           </div>
           <div className="mt-2 sm:mt-4">
-            <p className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900">
-              ${ingresosTotales.toLocaleString()}
+            <p className={`text-3xl sm:text-4xl font-black ${herramientasAlertas.length > 0 ? 'text-amber-800' : 'text-green-700'}`}>
+              {herramientasAlertas.length > 0
+                ? `${herramientasAlertas.length} alerta${herramientasAlertas.length === 1 ? '' : 's'}`
+                : '✓ 100%'}
             </p>
             <p className="text-xs sm:text-sm text-gray-500 font-medium mt-1 sm:mt-2 leading-tight">
-              {citasHistoricas.length === 1 ? '1 perrito atendido' : `${citasHistoricas.length} perritos atendidos`}
+              {herramientasAlertas.length > 0
+                ? 'requieren atención'
+                : 'todo operativo'}
             </p>
           </div>
         </div>
       </div>
 
       {/* ── CUERPO PRINCIPAL: 2 COLUMNAS ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
         {/* COLUMNA IZQUIERDA (7 cols): CITAS DE HOY */}
-        <div className="lg:col-span-7 bg-white p-7 sm:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-6">
-          <div className="flex justify-between items-center border-b pb-4">
+        <div className="lg:col-span-7 bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm space-y-4 sm:space-y-6">
+          <div className="flex justify-between items-center border-b pb-3 sm:pb-4">
             <div>
-              <h2 className="text-3xl font-extrabold text-gray-900 flex items-center gap-3">
-                <Clock className="text-blue-600" /> Citas de Hoy
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 flex items-center gap-2 sm:gap-3">
+                <Clock className="text-blue-600" size={22} /> Citas de Hoy
               </h2>
-              <p className="text-gray-400 text-lg mt-0.5">
+              <p className="text-gray-400 text-sm sm:text-lg mt-0.5">
                 {citasHoy.length === 0 ? 'Sin citas agendadas hoy' : `${citasHoy.length} perrito(s) programados`}
               </p>
             </div>
             <button
               onClick={() => onNavigate && onNavigate('agenda')}
-              className="text-blue-600 font-bold text-lg hover:underline flex items-center gap-1"
+              className="text-blue-600 font-bold text-sm sm:text-lg hover:underline flex items-center gap-1"
             >
-              Ver Agenda <ChevronRight size={20} />
+              Ver Agenda <ChevronRight size={18} />
             </button>
           </div>
 
           {citasHoy.length === 0 ? (
-            <div className="text-center py-14 space-y-4">
-              <Dog size={64} className="mx-auto text-gray-300" />
-              <p className="text-2xl text-gray-500 font-bold">No hay citas para hoy</p>
-              <p className="text-lg text-gray-400 max-w-md mx-auto">
-                El día de hoy está despejado. Puedes agendar una cita rápidamente desde la agenda.
+            <div className="text-center py-10 sm:py-14 space-y-3 sm:space-y-4">
+              <Dog size={56} className="mx-auto text-gray-300" />
+              <p className="text-xl sm:text-2xl text-gray-500 font-bold">No hay citas para hoy</p>
+              <p className="text-base sm:text-lg text-gray-400 max-w-md mx-auto">
+                El día está despejado. Puedes agendar una cita rápidamente desde la agenda.
               </p>
               <button
                 onClick={() => onNavigate && onNavigate('agenda')}
-                className="mt-2 inline-flex items-center gap-2 bg-blue-600 text-white font-bold text-xl px-7 py-4 rounded-2xl shadow-md hover:bg-blue-700 transition"
+                className="mt-2 inline-flex items-center gap-2 bg-blue-600 text-white font-bold text-lg sm:text-xl px-6 sm:px-7 py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-md hover:bg-blue-700 active:scale-95 transition"
               >
-                <Plus size={22} /> Agendar Cita
+                <Plus size={20} /> Agendar Cita
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {citasHoy.map(cita => {
                 const status = STATUS_BADGE[cita.estado] || STATUS_BADGE.PROGRAMADA;
                 const horaInicio = cita.hora?.substring(0, 5) || '00:00';
@@ -257,37 +221,31 @@ export default function DashboardHome({ onNavigate, onSelectCita }) {
                   <div
                     key={cita.id}
                     onClick={() => onSelectCita ? onSelectCita(cita) : onNavigate && onNavigate('agenda')}
-                    className="p-6 bg-gray-50 hover:bg-blue-50/40 rounded-2xl border border-gray-100 hover:border-blue-200 transition cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    className="p-4 sm:p-6 bg-gray-50 hover:bg-blue-50/40 rounded-xl sm:rounded-2xl border border-gray-100 hover:border-blue-200 transition cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4"
                   >
                     <div>
-                      <div className="flex items-center gap-3 flex-wrap">
-                        <span className="font-mono text-xl font-extrabold text-blue-700 bg-blue-100/60 px-3 py-1 rounded-xl">
+                      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                        <span className="font-mono text-base sm:text-xl font-extrabold text-blue-700 bg-blue-100/60 px-2.5 sm:px-3 py-1 rounded-lg sm:rounded-xl whitespace-nowrap">
                           🕐 {horaInicio} hrs
                         </span>
-                        <h3 className="text-2xl font-black text-gray-900">
+                        <h3 className="text-xl sm:text-2xl font-black text-gray-900 capitalize">
                           🐶 {cita.mascota?.nombre}
                         </h3>
-                        <span className={`px-3 py-1 rounded-full text-sm font-bold ${status.color}`}>
+                        <span className={`px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-bold ${status.color}`}>
                           {status.label}
                         </span>
                       </div>
 
-                      <p className="text-lg text-gray-600 font-medium mt-2">
+                      <p className="text-sm sm:text-lg text-gray-600 font-medium mt-1.5 sm:mt-2">
                         {cita.mascota?.raza || 'Mestizo'} • Tutor: <strong>{cita.mascota?.tutor?.nombre || 'Sin tutor'}</strong>
                         {cita.mascota?.tutor?.telefono && (
-                          <span className="text-gray-400 font-mono text-base"> ({cita.mascota.tutor.telefono})</span>
+                          <span className="text-gray-400 font-mono text-xs sm:text-base"> ({cita.mascota.tutor.telefono})</span>
                         )}
                       </p>
-
-                      {cita.montoRecaudado != null && (
-                        <p className="text-xl font-black text-emerald-700 mt-2">
-                          💰 Cobrado: ${Number(cita.montoRecaudado).toLocaleString()}
-                        </p>
-                      )}
                     </div>
 
-                    <div className="self-end sm:self-auto text-blue-600 font-bold text-lg flex items-center">
-                      Ficha <ChevronRight size={22} />
+                    <div className="self-end sm:self-auto text-blue-600 font-bold text-sm sm:text-lg flex items-center">
+                      Ficha <ChevronRight size={18} />
                     </div>
                   </div>
                 );
@@ -297,75 +255,75 @@ export default function DashboardHome({ onNavigate, onSelectCita }) {
         </div>
 
         {/* COLUMNA DERECHA (5 cols): INFORMACIÓN RELEVANTE */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-5 space-y-4 sm:space-y-6">
           {/* Tarjeta 1: Alertas y Estado de Herramientas */}
-          <div className="bg-white p-7 rounded-3xl border border-gray-100 shadow-sm space-y-4">
-            <div className="flex justify-between items-center border-b pb-3">
-              <h3 className="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
-                <Wrench className="text-purple-600" size={24} /> Herramientas y Máquinas
+          <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm space-y-3 sm:space-y-4">
+            <div className="flex justify-between items-center border-b pb-2 sm:pb-3">
+              <h3 className="text-xl sm:text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+                <Wrench className="text-purple-600" size={20} /> Herramientas
               </h3>
               <button
                 onClick={() => onNavigate && onNavigate('productos')}
-                className="text-purple-600 font-bold text-base hover:underline"
+                className="text-purple-600 font-bold text-xs sm:text-base hover:underline"
               >
                 Inventario
               </button>
             </div>
 
             {herramientasAlertas.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {herramientasAlertas.map(h => (
-                  <div key={h.id} className="p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-3">
-                    <AlertTriangle className="text-amber-600 mt-1 flex-shrink-0" size={22} />
+                  <div key={h.id} className="p-3 sm:p-4 bg-amber-50 border border-amber-200 rounded-xl sm:rounded-2xl flex items-start gap-2 sm:gap-3">
+                    <AlertTriangle className="text-amber-600 mt-0.5 flex-shrink-0" size={18} />
                     <div>
-                      <p className="font-bold text-lg text-amber-900">{h.nombre}</p>
-                      <p className="text-sm text-amber-800">
+                      <p className="font-bold text-base sm:text-lg text-amber-900">{h.nombre}</p>
+                      <p className="text-xs sm:text-sm text-amber-800">
                         {h.estado !== 'OPERATIVA'
                           ? `Estado: ${h.estado}`
-                          : `Más de 60 días sin afilado/mantención (última: ${h.ultimoMantenimiento})`}
+                          : `+60 días sin mantención (última: ${h.ultimoMantenimiento})`}
                       </p>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-2xl flex items-center gap-3">
-                <CheckCircle2 className="text-green-600 flex-shrink-0" size={24} />
-                <p className="font-bold text-lg text-green-900">
-                  Todas las herramientas y máquinas operativas al 100%.
+              <div className="p-3 sm:p-4 bg-green-50 border border-green-200 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-3">
+                <CheckCircle2 className="text-green-600 flex-shrink-0" size={20} />
+                <p className="font-bold text-sm sm:text-lg text-green-900">
+                  Todas las herramientas operativas al 100%.
                 </p>
               </div>
             )}
           </div>
 
           {/* Tarjeta 2: Shampoos en Uso (Duración) */}
-          <div className="bg-white p-7 rounded-3xl border border-gray-100 shadow-sm space-y-4">
-            <div className="flex justify-between items-center border-b pb-3">
-              <h3 className="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
-                <Sparkles className="text-blue-500" size={24} /> Shampoos en Uso
+          <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm space-y-3 sm:space-y-4">
+            <div className="flex justify-between items-center border-b pb-2 sm:pb-3">
+              <h3 className="text-xl sm:text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+                <Sparkles className="text-blue-500" size={20} /> Shampoos en Uso
               </h3>
               <button
                 onClick={() => onNavigate && onNavigate('productos')}
-                className="text-blue-600 font-bold text-base hover:underline"
+                className="text-blue-600 font-bold text-xs sm:text-base hover:underline"
               >
                 Ver Todo
               </button>
             </div>
 
             {shampoosEnUso.length === 0 ? (
-              <p className="text-gray-400 text-lg py-2">No hay shampoos marcados en uso actualmente.</p>
+              <p className="text-gray-400 text-sm sm:text-lg py-2">No hay shampoos marcados en uso actualmente.</p>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {shampoosEnUso.map(s => {
                   const ini = s.fechaApertura ? new Date(s.fechaApertura) : new Date();
                   const dias = Math.max(0, Math.floor((new Date() - ini) / (1000 * 60 * 60 * 24)));
                   return (
-                    <div key={s.id} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex justify-between items-center">
+                    <div key={s.id} className="p-3 sm:p-4 bg-gray-50 rounded-xl sm:rounded-2xl border border-gray-100 flex justify-between items-center">
                       <div>
-                        <p className="font-bold text-lg text-gray-900">{s.nombre}</p>
-                        <p className="text-sm text-gray-500">Abierto: {s.fechaApertura}</p>
+                        <p className="font-bold text-sm sm:text-lg text-gray-900">{s.nombre}</p>
+                        <p className="text-xs sm:text-sm text-gray-500">Abierto: {s.fechaApertura}</p>
                       </div>
-                      <span className="font-extrabold text-blue-700 bg-blue-100/70 px-3 py-1.5 rounded-xl text-base">
+                      <span className="font-extrabold text-blue-700 bg-blue-100/70 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-xs sm:text-base whitespace-nowrap">
                         ⏳ {dias} días
                       </span>
                     </div>
@@ -373,35 +331,6 @@ export default function DashboardHome({ onNavigate, onSelectCita }) {
                 })}
               </div>
             )}
-          </div>
-
-          {/* Tarjeta 3: Resumen Rápido de Finanzas */}
-          <div className="bg-gradient-to-br from-purple-50 via-white to-indigo-50 p-7 rounded-3xl border border-purple-100 shadow-sm space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-2xl font-extrabold text-purple-950 flex items-center gap-2">
-                <TrendingUp className="text-purple-600" size={24} /> Resumen de {nombreMesActual}
-              </h3>
-              <button
-                onClick={() => onNavigate && onNavigate('finanzas')}
-                className="text-purple-700 font-bold text-base hover:underline"
-              >
-                Ver Finanzas
-              </button>
-            </div>
-
-            <div className="p-4 bg-white rounded-2xl border border-purple-100 flex justify-between items-center">
-              <span className="text-lg font-bold text-gray-600">Total Ingresos:</span>
-              <span className="text-3xl font-black text-purple-900">
-                ${ingresosMes.toLocaleString()}
-              </span>
-            </div>
-
-            <div className="p-4 bg-white rounded-2xl border border-purple-100 flex justify-between items-center">
-              <span className="text-lg font-bold text-gray-600">Servicios Cobrados:</span>
-              <span className="text-2xl font-black text-gray-900">
-                {citasDelMes.length} perritos
-              </span>
-            </div>
           </div>
         </div>
       </div>

@@ -1,8 +1,24 @@
-import { useState, useEffect } from 'react';
-import { Search, ChevronDown, ChevronUp, Plus, Trash2, Edit2, Phone, Calendar, ShieldAlert, MessageCircle, Save, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Search, ChevronDown, ChevronUp, Plus, Trash2, Edit2, Phone, Calendar, ShieldAlert, MessageCircle, Save, X, Camera, Grid, List } from 'lucide-react';
 import { API_URL } from '../api';
 
 const ACTION_OBS = ['😇 Excelente', '❤️ Regalón', '😬 Nervioso', '😨 Miedoso', '💨 No turbina', '✂️ No máquina', '🛑 Pausas'];
+const FOTOS_KEY = 'lilyluz_mascotas_fotos';
+
+// Helpers para fotos en localStorage
+const cargarFotosStorage = () => {
+  try { return JSON.parse(localStorage.getItem(FOTOS_KEY) || '{}'); } catch { return {}; }
+};
+const guardarFotoStorage = (mascotaId, dataUrl) => {
+  const fotos = cargarFotosStorage();
+  fotos[mascotaId] = dataUrl;
+  localStorage.setItem(FOTOS_KEY, JSON.stringify(fotos));
+};
+const eliminarFotoStorage = (mascotaId) => {
+  const fotos = cargarFotosStorage();
+  delete fotos[mascotaId];
+  localStorage.setItem(FOTOS_KEY, JSON.stringify(fotos));
+};
 
 export default function Mascotas() {
   const [search, setSearch] = useState('');
@@ -13,6 +29,9 @@ export default function Mascotas() {
   const [editingId, setEditingId] = useState(null);
   const [guardando, setGuardando] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [vistaGrid, setVistaGrid] = useState(false);
+  const [fotos, setFotos] = useState(cargarFotosStorage());
+  const fileInputRef = useRef(null);
 
   // Form states (usados tanto para crear arriba como para editar inline)
   const [nombre, setNombre] = useState('');
@@ -200,6 +219,40 @@ export default function Mascotas() {
     (p.raza || '').toLowerCase().includes(search.toLowerCase())
   );
 
+  // Handler para subir foto de mascota
+  const [fotoTargetId, setFotoTargetId] = useState(null);
+  const handleFotoClick = (mascotaId, e) => {
+    if (e) e.stopPropagation();
+    setFotoTargetId(mascotaId);
+    setTimeout(() => fileInputRef.current?.click(), 50);
+  };
+  const handleFotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file || !fotoTargetId) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      // Comprimir a 300x300 para ahorrar espacio en localStorage
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const size = 300;
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        const min = Math.min(img.width, img.height);
+        const sx = (img.width - min) / 2;
+        const sy = (img.height - min) / 2;
+        ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        guardarFotoStorage(fotoTargetId, dataUrl);
+        setFotos(prev => ({ ...prev, [fotoTargetId]: dataUrl }));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
   const renderFormulario = (idDestino = null) => (
     <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-6">
       <div className="flex justify-between items-center border-b pb-4">
@@ -383,23 +436,36 @@ export default function Mascotas() {
 
   return (
     <div className="animate-in fade-in duration-300 pb-20">
+      {/* Input oculto para foto */}
+      <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFotoChange} />
+
       {/* Encabezado */}
       <header className="flex justify-between items-center gap-4 mb-6 sm:mb-8">
         <div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Directorio de Mascotas</h1>
           <p className="text-base sm:text-xl text-gray-400 mt-1">{perros.length} perritos registrados en total</p>
         </div>
-        <button
-          onClick={() => {
-            resetFormFields();
-            setShowNewForm(!showNewForm);
-            setExpandedId(null);
-            setEditingId(null);
-          }}
-          className="bg-black text-white p-3.5 sm:p-5 rounded-full shadow-lg hover:scale-105 active:scale-95 transition flex items-center justify-center flex-shrink-0"
-        >
-          <Plus size={28} />
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Toggle Grid / Lista */}
+          <button
+            onClick={() => setVistaGrid(!vistaGrid)}
+            className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl transition ${vistaGrid ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+            title={vistaGrid ? 'Ver como lista' : 'Ver como galería'}
+          >
+            {vistaGrid ? <List size={22} /> : <Grid size={22} />}
+          </button>
+          <button
+            onClick={() => {
+              resetFormFields();
+              setShowNewForm(!showNewForm);
+              setExpandedId(null);
+              setEditingId(null);
+            }}
+            className="bg-black text-white p-3.5 sm:p-5 rounded-full shadow-lg hover:scale-105 active:scale-95 transition flex items-center justify-center flex-shrink-0"
+          >
+            <Plus size={28} />
+          </button>
+        </div>
       </header>
 
       {/* Barra de búsqueda */}
@@ -422,6 +488,51 @@ export default function Mascotas() {
       )}
 
       {/* Lista de Mascotas */}
+      {vistaGrid ? (
+        /* ── VISTA GALERÍA / GRID DE FOTOS ── */
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+          {filtered.length === 0 && (
+            <div className="col-span-full text-center p-8 text-gray-400 font-medium text-xl bg-white rounded-2xl border border-gray-100">
+              No se encontraron mascotas {search ? `para "${search}"` : 'registradas aún'}.
+            </div>
+          )}
+          {filtered.map(p => {
+            const foto = fotos[p.id];
+            return (
+              <div
+                key={p.id}
+                onClick={() => { setVistaGrid(false); setExpandedId(p.id); }}
+                className="bg-white rounded-2xl sm:rounded-3xl border border-gray-100 hover:border-blue-300 hover:shadow-md transition cursor-pointer overflow-hidden group"
+              >
+                {/* Foto o placeholder */}
+                <div className="aspect-square bg-gray-100 relative overflow-hidden">
+                  {foto ? (
+                    <img src={foto} alt={p.nombre} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
+                      <span className="text-5xl sm:text-6xl">🐶</span>
+                    </div>
+                  )}
+                  {/* Botón de cámara sobre la foto */}
+                  <button
+                    onClick={(e) => handleFotoClick(p.id, e)}
+                    className="absolute bottom-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-md text-gray-600 hover:text-blue-600 active:scale-95 transition opacity-0 group-hover:opacity-100"
+                  >
+                    <Camera size={16} />
+                  </button>
+                </div>
+                {/* Info compacta */}
+                <div className="p-4 sm:p-5">
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-gray-900 capitalize truncate">{p.nombre}</h3>
+                  <p className="text-sm sm:text-base text-gray-500 truncate mt-1">{p.raza || 'Sin raza'} • {p.edad != null ? `${p.edad} años` : ''}</p>
+                  <p className="text-sm text-gray-400 truncate mt-1">{p.tutor?.nombre || ''}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+      /* ── VISTA LISTA (ORIGINAL) ── */
       <div className="space-y-4">
         {filtered.length === 0 && (
           <div className="text-center p-12 text-gray-400 font-medium text-2xl bg-white rounded-3xl border border-gray-100">
@@ -434,6 +545,7 @@ export default function Mascotas() {
           const isEditingThis = editingId === p.id;
           const telLimpio = (p.tutor?.telefono || '').replace(/\D/g, '');
           const historialPerrito = visitas.filter(v => v.mascota?.id === p.id);
+          const foto = fotos[p.id];
 
           return (
             <div
@@ -442,16 +554,33 @@ export default function Mascotas() {
                 isExpanded ? 'border-blue-300 ring-2 ring-blue-50 shadow-md' : 'border-gray-100 hover:shadow-md'
               }`}
             >
-              {/* Tarjeta principal clickeable: despliega el menú justo aquí */}
+              {/* Tarjeta principal clickeable */}
               <div
                 onClick={() => toggleExpand(p.id)}
                 className="p-4 sm:p-7 cursor-pointer select-none"
               >
-                {/* Fila 1: Nombre de la mascota y botones de acción */}
+                {/* Fila 1: Foto + Nombre + Acciones */}
                 <div className="flex items-center justify-between gap-2">
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight capitalize flex items-center gap-2">
-                    <span>🐶</span> {p.nombre}
-                  </h3>
+                  <div className="flex items-center gap-3">
+                    {/* Mini foto / avatar */}
+                    <div
+                      onClick={(e) => handleFotoClick(p.id, e)}
+                      className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-blue-300 transition group relative"
+                    >
+                      {foto ? (
+                        <img src={foto} alt={p.nombre} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-4xl sm:text-5xl text-gray-300">🐶</div>
+                      )}
+                      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                        <Camera size={24} className="text-white" />
+                      </div>
+                    </div>
+
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight capitalize">
+                      {p.nombre}
+                    </h3>
+                  </div>
 
                   <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                     <button
@@ -663,6 +792,7 @@ export default function Mascotas() {
           );
         })}
       </div>
+      )}
     </div>
   );
 }

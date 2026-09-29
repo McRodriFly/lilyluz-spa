@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Play, CheckCircle2, DollarSign, MessageCircle, Save, History, Check, Edit2, X, Dog } from 'lucide-react';
 
-const API_URL = `http://${window.location.hostname}:8080/api`;
+import { API_URL } from '../api';
 
 const STATUS_MAP = {
   PROGRAMADA: { label: 'Programada', color: 'bg-gray-100 text-gray-700' },

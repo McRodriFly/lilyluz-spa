@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TrendingUp, DollarSign, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-const API_URL = `http://${window.location.hostname}:8080/api`;
+import { API_URL } from '../api';
 
 export default function Finanzas() {
   const [citasPagadas, setCitasPagadas] = useState([]);

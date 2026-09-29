@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, ChevronRight, Trash2, Edit3, Calendar, Clock, AlertTriangle, CheckCircle, Dog, Sparkles, X } from 'lucide-react';
 
-const API_URL = `http://${window.location.hostname}:8080/api`;
+import { API_URL } from '../api';
 
 const HORAS_SUGERIDAS = ['09:00', '11:00', '13:00', '15:00', '17:00'];
 
@@ -163,6 +163,20 @@ export default function Agenda({ onSelectCita }) {
       resetForm();
       setVistaFecha(fecha);
       fetchCitas(fecha);
+
+      // ── NOTIFICACIÓN AUTOMÁTICA POR WHATSAPP AL DUEÑO ──
+      if (!editandoId) {
+        const mascotaSel = mascotas.find(m => m.id === parseInt(perroId, 10));
+        const telRaw = (mascotaSel?.tutor?.telefono || '').replace(/\D/g, '');
+        if (telRaw.length >= 8 && mascotaSel) {
+          const nombrePerro = mascotaSel.nombre || 'tu mascota';
+          const nombreTutor = mascotaSel.tutor?.nombre?.split(' ')[0] || '';
+          const fechaFormateada = new Date(fecha + 'T12:00:00').toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
+          const msg = `¡Hola${nombreTutor ? ` ${nombreTutor}` : ''}! 🐾 Te confirmamos que la cita de *${nombrePerro}* en LilyLuz Spa quedó agendada para el *${fechaFormateada}* a las *${hora} hrs*. ¡Te esperamos! 🫧✨`;
+          const waUrl = `https://wa.me/${telRaw}?text=${encodeURIComponent(msg)}`;
+          window.open(waUrl, '_blank');
+        }
+      }
     } catch (e) {
       console.error(e);
       setError('Error al guardar en el servidor.');
