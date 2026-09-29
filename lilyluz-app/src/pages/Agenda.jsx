@@ -202,11 +202,11 @@ export default function Agenda({ onSelectCita }) {
   return (
     <div className="animate-in fade-in duration-300 pb-20">
       {/* ── HEADER ── */}
-      <header className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6 sm:mb-8">
+      <header className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3 sm:gap-4 mb-5 sm:mb-8">
         <div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Agenda</h1>
-          <div className="flex items-center gap-2 sm:gap-3 mt-2 flex-wrap">
-            <span className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-base sm:text-lg font-bold ${
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Agenda</h1>
+          <div className="flex items-center gap-2 mt-1 sm:mt-2 flex-wrap">
+            <span className={`px-2.5 sm:px-4 py-0.5 sm:py-1.5 rounded-full text-xs sm:text-base font-bold ${
               totalCitasHoy === 0 ? 'bg-gray-100 text-gray-600' :
               totalCitasHoy < 4 ? 'bg-green-100 text-green-800' :
               'bg-orange-100 text-orange-800'
@@ -214,7 +214,7 @@ export default function Agenda({ onSelectCita }) {
               🐾 {totalCitasHoy} de 4 perritos (máx)
             </span>
             {totalCitasHoy > 4 && (
-              <span className="px-2.5 sm:px-3 py-0.5 sm:py-1 bg-purple-100 text-purple-800 rounded-full text-xs sm:text-sm font-bold">
+              <span className="px-2 py-0.5 bg-purple-100 text-purple-800 rounded-full text-[11px] sm:text-sm font-bold">
                 +{totalCitasHoy - 4} cupo(s) extra
               </span>
             )}
@@ -223,28 +223,29 @@ export default function Agenda({ onSelectCita }) {
 
         {/* Controles de fecha y botón agendar */}
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap w-full lg:w-auto">
-          <div className="relative flex-1 sm:flex-initial">
-            <Calendar size={20} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-            <input
-              type="date"
-              className="w-full sm:w-auto pl-10 pr-3 sm:pr-5 py-3 sm:py-4 text-lg sm:text-xl font-bold bg-white rounded-2xl shadow-sm border border-gray-200 outline-blue-500"
-              value={vistaFecha}
-              onChange={e => setVistaFecha(e.target.value)}
-            />
+          <div className="flex items-center gap-2 flex-1 sm:flex-initial">
+            <div className="relative flex-1">
+              <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              <input
+                type="date"
+                className="w-full pl-8 pr-2.5 py-2 sm:py-3.5 text-xs sm:text-base font-bold bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 outline-blue-500"
+                value={vistaFecha}
+                onChange={e => setVistaFecha(e.target.value)}
+              />
+            </div>
+            <button
+              onClick={() => setVistaFecha(new Date().toISOString().split('T')[0])}
+              className="px-3 sm:px-5 py-2 sm:py-3.5 bg-white border border-gray-200 text-gray-700 font-bold text-xs sm:text-base rounded-xl sm:rounded-2xl shadow-sm hover:bg-gray-50 active:scale-95 transition whitespace-nowrap"
+            >
+              Hoy
+            </button>
           </div>
 
           <button
-            onClick={() => setVistaFecha(new Date().toISOString().split('T')[0])}
-            className="px-4 sm:px-5 py-3 sm:py-4 bg-white border border-gray-200 text-gray-700 font-bold text-lg sm:text-xl rounded-2xl shadow-sm hover:bg-gray-50 active:scale-95 transition"
-          >
-            Hoy
-          </button>
-
-          <button
             onClick={abrirNuevoForm}
-            className="w-full sm:w-auto bg-black hover:bg-gray-800 active:scale-95 text-white px-5 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-lg font-bold text-lg sm:text-xl flex items-center justify-center gap-2 transition"
+            className="w-full sm:w-auto bg-black hover:bg-gray-800 active:scale-95 text-white px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl shadow-md font-bold text-xs sm:text-base flex items-center justify-center gap-1.5 transition"
           >
-            <Plus size={22} /> Agendar Cita
+            <Plus size={18} /> Agendar Cita
           </button>
         </div>
       </header>
@@ -436,23 +437,23 @@ export default function Agenda({ onSelectCita }) {
             <div
               key={cita.id}
               onClick={() => onSelectCita(cita)}
-              className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 hover:border-blue-300 hover:shadow-md transition cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4 select-none"
+              className="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 hover:border-blue-300 hover:shadow-md transition cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 select-none"
             >
               {/* Información Principal */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2.5 sm:gap-4 flex-wrap">
-                  <span className="whitespace-nowrap font-mono text-base sm:text-2xl font-extrabold text-blue-600 bg-blue-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl border border-blue-100">
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                  <span className="whitespace-nowrap font-mono text-xs sm:text-xl font-extrabold text-blue-600 bg-blue-50 px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl border border-blue-100">
                     🕐 {horaInicio} - {horaFinStr} hrs
                   </span>
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+                  <h3 className="text-base sm:text-2xl font-extrabold text-gray-900 capitalize truncate">
                     🐶 {cita.mascota?.nombre}
                   </h3>
-                  <span className={`px-3 py-1 rounded-full text-sm sm:text-base font-bold ${status.color}`}>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-bold ${status.color}`}>
                     {status.label}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3 sm:gap-4 mt-2 sm:mt-3 text-base sm:text-xl text-gray-500 font-medium flex-wrap">
+                <div className="flex items-center gap-2 sm:gap-4 mt-1.5 sm:mt-2.5 text-xs sm:text-base text-gray-500 font-medium flex-wrap">
                   <span>
                     Raza: <strong className="text-gray-800">{cita.mascota?.raza || 'Mestizo'}</strong>
                   </span>
@@ -473,33 +474,33 @@ export default function Agenda({ onSelectCita }) {
 
                 {/* Si la cita ya está finalizada/pagada, mostrar el cobro registrado */}
                 {cita.montoRecaudado != null && (
-                  <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 bg-purple-50 border border-purple-200 rounded-xl text-purple-900 font-bold text-lg">
+                  <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 border border-purple-200 rounded-lg text-purple-900 font-bold text-xs sm:text-base">
                     💰 Cobrado: ${Number(cita.montoRecaudado).toLocaleString()}
-                    {cita.metodoPago && <span className="text-sm font-normal text-purple-700">({cita.metodoPago})</span>}
+                    {cita.metodoPago && <span className="text-xs font-normal text-purple-700">({cita.metodoPago})</span>}
                   </div>
                 )}
               </div>
 
               {/* Botones de acción */}
-              <div className="flex items-center gap-3 self-end md:self-auto">
+              <div className="flex items-center gap-2 self-end md:self-auto pt-1 md:pt-0 border-t md:border-t-0 border-gray-50 w-full md:w-auto justify-end">
                 <button
                   type="button"
                   onClick={(e) => abrirEditar(cita, e)}
-                  className="p-4 text-blue-600 hover:bg-blue-50 rounded-2xl transition"
+                  className="p-2 sm:p-3 text-blue-600 hover:bg-blue-50 active:scale-95 rounded-xl transition"
                   title="Cambiar horario"
                 >
-                  <Edit3 size={24} />
+                  <Edit3 size={18} />
                 </button>
                 <button
                   type="button"
                   onClick={(e) => eliminarCita(cita.id, e)}
-                  className="p-4 text-red-500 hover:bg-red-50 rounded-2xl transition"
+                  className="p-2 sm:p-3 text-red-500 hover:bg-red-50 active:scale-95 rounded-xl transition"
                   title="Cancelar cita"
                 >
-                  <Trash2 size={24} />
+                  <Trash2 size={18} />
                 </button>
-                <div className="p-3 text-gray-400 flex items-center font-bold text-lg text-blue-600">
-                  Ver Ficha <ChevronRight size={26} className="ml-1" />
+                <div className="px-2.5 py-1.5 text-gray-400 flex items-center font-bold text-xs sm:text-base text-blue-600">
+                  Ver Ficha <ChevronRight size={18} className="ml-0.5" />
                 </div>
               </div>
             </div>

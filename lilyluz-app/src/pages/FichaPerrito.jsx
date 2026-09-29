@@ -223,36 +223,36 @@ export default function FichaPerrito({ citaId, onBack }) {
       </div>
 
       {/* ── BOTONES DE FLUJO DE LA CITA ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4">
         {/* 1. Iniciar */}
         <button
           onClick={() => cambiarEstado('iniciar')}
           disabled={cita.estado !== 'PROGRAMADA'}
-          className="h-16 sm:h-24 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xl sm:text-2xl font-bold rounded-2xl sm:rounded-3xl flex items-center justify-center gap-3 shadow-md transition active:scale-98"
+          className="h-14 sm:h-20 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed text-white text-base sm:text-xl font-bold rounded-2xl sm:rounded-3xl flex items-center justify-center gap-2.5 shadow-md transition active:scale-98"
         >
-          <Play size={24} /> INICIAR VISITA
+          <Play size={20} /> INICIAR VISITA
         </button>
 
         {/* 2. Marcar Listo */}
         <button
           onClick={() => cambiarEstado('terminar')}
           disabled={cita.estado !== 'EN_PROCESO'}
-          className="h-16 sm:h-24 bg-blue-600 hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xl sm:text-2xl font-bold rounded-2xl sm:rounded-3xl flex items-center justify-center gap-3 shadow-md transition active:scale-98"
+          className="h-14 sm:h-20 bg-blue-600 hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-white text-base sm:text-xl font-bold rounded-2xl sm:rounded-3xl flex items-center justify-center gap-2.5 shadow-md transition active:scale-98"
         >
-          <CheckCircle2 size={24} /> MARCAR LISTO
+          <CheckCircle2 size={20} /> MARCAR LISTO
         </button>
 
         {/* 3. Finalizar y Registrar Monto Cobrado */}
         <button
           onClick={() => setShowCobroModal(true)}
           disabled={cita.estado === 'PROGRAMADA'}
-          className={`h-16 sm:h-24 text-white text-xl sm:text-2xl font-bold rounded-2xl sm:rounded-3xl flex items-center justify-center gap-3 shadow-md transition active:scale-98 ${
+          className={`h-14 sm:h-20 text-white text-base sm:text-xl font-bold rounded-2xl sm:rounded-3xl flex items-center justify-center gap-2.5 shadow-md transition active:scale-98 ${
             esFinalizado
               ? 'bg-purple-800 hover:bg-purple-900'
               : 'bg-purple-600 hover:bg-purple-700'
           }`}
         >
-          <DollarSign size={26} />
+          <DollarSign size={20} />
           {esFinalizado ? 'MODIFICAR MONTO' : 'FINALIZAR CITA'}
         </button>
       </div>

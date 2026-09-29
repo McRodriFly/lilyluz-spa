@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@layer base {
+  html, body {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Evitar zoom automático indeseado en inputs en iOS Safari manteniendo 16px mínimo */
+  input, select, textarea {
+    font-size: 16px;
+  }
+}

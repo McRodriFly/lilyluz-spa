@@ -23,6 +23,9 @@ public class Mascota {
     private Double peso;
     private String tamano;
 
+    @Column(length = 500)
+    private String fotoUrl;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tutor_id", nullable = false)
     private Tutor tutor;
