@@ -42,6 +42,11 @@ echo   │                                         │
 echo   │  Para detener: Cierra esta ventana.     │
 echo   └─────────────────────────────────────────┘
 echo.
+echo   ⚠️  IMPORTANTE PARA CELULARES:
+echo   Si Windows pregunta por el Firewall, marca
+echo   AMBAS casillas (privada y publica) y Aceptar.
+echo   Sin eso, el iPhone no podra conectarse.
+echo.
 
 :: Abrir navegador después de 3 segundos
 start "" timeout /t 3 /nobreak >nul & start http://localhost:8080
