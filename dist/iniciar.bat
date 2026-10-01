@@ -1,57 +1,98 @@
 @echo off
-chcp 65001 >nul
+setlocal EnableDelayedExpansion
 title LilyLuz Spa - Peluqueria Canina
-color 0B
-
-echo.
-echo   🐾  LilyLuz Spa — Peluquería Canina
-echo   ════════════════════════════════════
-echo.
-
 cd /d "%~dp0"
 
-:: Buscar Java en el sistema
-java -version >nul 2>&1
-if %ERRORLEVEL% NEQ 0 (
-    echo   ❌ No se encontró Java instalado en este equipo.
+echo.
+echo   ========================================
+echo     LilyLuz Spa - Peluqueria Canina
+echo   ========================================
+echo.
+
+:: -----------------------------------------------------------
+:: 1. Verificar Java
+:: -----------------------------------------------------------
+where java >nul 2>nul
+if %errorlevel% neq 0 (
+    echo   [X] No se encontro Java instalado en este equipo.
     echo.
-    echo   Por favor descarga e instala Java 21 desde:
-    echo   https://adoptium.net/temurin/releases/?version=21
+    echo   Solucion: descarga e instala Java 21 ^(gratis^) desde:
+    echo     https://adoptium.net/temurin/releases/?version=21
+    echo   Elige: Windows - x64 - JRE - .msi
+    echo   Cuando lo instales, vuelve a abrir este archivo.
     echo.
     pause
     exit /b 1
 )
+echo   [OK] Java detectado.
 
-:: Obtener la IP local de Windows
-for /f "tokens=4" %%a in ('route print ^| findstr 0.0.0.0 ^| findstr /v "0.0.0.0.*0.0.0.0"') do (
-    set LOCAL_IP=%%a
-    goto :ip_found
+:: -----------------------------------------------------------
+:: 2. Verificar si el servidor YA esta corriendo
+:: -----------------------------------------------------------
+netstat -ano | findstr ":8080" | findstr "LISTENING" >nul 2>nul
+if %errorlevel% equ 0 (
+    echo   [!] El servidor ya esta corriendo en este equipo.
+    echo       No es necesario abrirlo dos veces.
+    echo.
+    echo   Si quieres reiniciarlo, ejecuta primero: detener.bat
+    echo   De lo contrario, usa la aplicacion directamente.
+    echo.
+    start "" http://localhost:8080
+    pause
+    exit /b 0
 )
-:ip_found
 
-echo   💾 Base de datos: .\data\lilyluzdb.mv.db
+:: -----------------------------------------------------------
+:: 3. Obtener la direccion IP de este PC (para el celular)
+:: -----------------------------------------------------------
+set LOCAL_IP=
+for /f "tokens=2 delims=:" %%a in ('ipconfig ^| findstr /c:"IPv4"') do (
+    if not defined LOCAL_IP (
+        set RAWIP=%%a
+        for /f "tokens=1" %%b in ("!RAWIP!") do set LOCAL_IP=%%b
+    )
+)
+
 echo.
-echo   ┌─────────────────────────────────────────┐
-echo   │  🌐 Abre en tu navegador:               │
-echo   │                                         │
-echo   │  Desde este PC:   http://localhost:8080 │
+echo   ========================================
+echo     ACCESO A LILYLUZ SPA
+echo   ========================================
+echo.
+echo   Desde este computador:
+echo       http://localhost:8080
+echo.
 if defined LOCAL_IP (
-echo   │  Desde tu iPhone: http://%LOCAL_IP%:8080 │
+    echo   Desde tu celular ^(iPhone, misma WiFi^):
+    echo       http://!LOCAL_IP!:8080
+) else (
+    echo   Desde tu celular: ejecuta ipconfig y copia la IPv4
 )
-echo   │                                         │
-echo   │  Para detener: Cierra esta ventana.     │
-echo   └─────────────────────────────────────────┘
 echo.
-echo   ⚠️  IMPORTANTE PARA CELULARES:
-echo   Si Windows pregunta por el Firewall, marca
-echo   AMBAS casillas (privada y publica) y Aceptar.
-echo   Sin eso, el iPhone no podra conectarse.
+echo   =========================================
+echo.
+echo   Manten esta ventana abierta mientras trabajas.
+echo   Para cerrar el servidor: ejecuta detener.bat
+echo   o cierra esta ventana.
+echo.
+echo   NOTA: Si Windows pregunta por el Firewall, marca
+echo   AMBAS casillas ^(privada y publica^) y Aceptar,
+echo   si no el celular no podra conectarse.
+echo.
+echo   =========================================
+echo.
+echo   Iniciando servidor...
 echo.
 
-:: Abrir navegador después de 3 segundos
-start "" timeout /t 3 /nobreak >nul & start http://localhost:8080
+:: -----------------------------------------------------------
+:: 4. Abrir el navegador automaticamente
+:: -----------------------------------------------------------
+start "" timeout /t 4 /nobreak >nul & start http://localhost:8080
 
-:: Iniciar el servidor
+:: -----------------------------------------------------------
+:: 5. Ejecutar el servidor (esta ventana queda abierta)
+:: -----------------------------------------------------------
 java -jar lilyluz-spa.jar
 
+echo.
+echo   Servidor detenido. Puedes cerrar esta ventana.
 pause
