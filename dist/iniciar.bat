@@ -16,7 +16,7 @@ where java >nul 2>nul
 if %errorlevel% neq 0 (
     echo   [X] No se encontro Java instalado en este equipo.
     echo.
-    echo   Solucion: descarga e instala Java 21 ^(gratis^) desde:
+    echo   Solucion: descarga e instala Java 17 o 21 ^(gratis^) desde:
     echo     https://adoptium.net/temurin/releases/?version=21
     echo   Elige: Windows - x64 - JRE - .msi
     echo   Cuando lo instales, vuelve a abrir este archivo.
